@@ -10,7 +10,7 @@ class Config:
     drop1_keep = 0.5
     fc2_n_units = 25
     drop2_keep = 0.5
-    fc3_n_units = 40
+    fc3_n_units = 20
     drop3_keep = 0.5
     learning_rate = 1e-4
     batch_size = 200
