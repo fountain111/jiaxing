@@ -1,4 +1,4 @@
-from jiaxing.train_data import TrainData
+from train_data import TrainData
 import tensorlayer as tl
 from tensorlayer.layers import *
 import tensorflow as tf
