@@ -1,4 +1,3 @@
-import tensorflow as tf
 import data_process as dp
 from model import *
 from  sklearn.metrics import *
@@ -44,17 +43,20 @@ def train():
            dp_dict = tl.utils.dict_to_one(network.all_drop)
            feed_dict={x:data.churn_validation[:,1:],target_y:data.churn_validation[:,0]}
            feed_dict.update(dp_dict)
-           #pre_labels = sess.run(tf.argmax(model_labels,axis=1),feed_dict=feed_dict)
-           #recall = recall_score(data.churn_validation[:,0].ravel(), pre_labels.ravel())
+           recall = accuracy.eval(feed_dict=feed_dict)
+           print('recall',recall)
+
+           feed_dict={x:data.notChurn_validation[:,1:],target_y:data.notChurn_validation[:,0]}
+           feed_dict.update(dp_dict)
            acc = accuracy.eval(feed_dict=feed_dict)
-           print('recall',acc)
+           fn = (1-acc)*data.notChurn_validation.shape[0]
+           precision = recall*data.churn_validation.shape[0]/(recall*data.churn_validation.shape[0]+fn)
+           print('acc,precision',acc,precision)
 
 
-         #     validation_loss = sess.run(loss_op, feed_dict={x: data.churn_validation[:,1:], target_y: data.churn_validation[:,0:1] })
 
 
 def main(argv=None):
-    #datas = pd.read_csv('training.csv')
     train()
 
 

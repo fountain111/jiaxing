@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 
 trainAndValidationProportion = 0.7
 shapeOfRows = 0
@@ -22,9 +20,12 @@ class Data_process:
         self.churn_validation = self.churn_datas.drop(self.churn_train.index).as_matrix()
         self.notChurn_train = self.notchurn_datas.sample(frac=trainAndValidationProportion)
         self.notChurn_validation = self.notchurn_datas.drop(self.notChurn_train.index).as_matrix()
+        self.notChurn_train = self.notChurn_train.reset_index(drop=True)
+        self.churn_train = self.churn_train.reset_index(drop=True)
         self.sampleColumnSize = self.churn_train.shape[1]
         self.trainDatas = pd.concat([self.notChurn_train.iloc[self.startNotChurnTrainDatasLocation:self.startNotChurnTrainDatasLocation +
-                                                                                                   self.churn_train.shape[shapeOfRows] * churnAndNotChurnProportion],self.churn_train])
+                                    self.churn_train.shape[shapeOfRows] * churnAndNotChurnProportion] ,
+                                    self.churn_train],ignore_index=True)
         self.trainDatas = self.trainDatas.sample(frac=1).as_matrix()
         self.startNotChurnTrainDatasLocation =self.churn_train.shape[shapeOfRows]* churnAndNotChurnProportion
 
@@ -35,12 +36,12 @@ class Data_process:
             self.startTrainDatasLocation = 0
             self.epoch = self.epoch+ 1
             print('epoch',self.epoch)
+        self.trainDatas = pd.concat([self.notChurn_train.iloc[self.startNotChurnTrainDatasLocation:self.startNotChurnTrainDatasLocation +
+                                                              self.churn_train.shape[shapeOfRows] * churnAndNotChurnProportion],
+                                                              self.churn_train], ignore_index=True)
 
-        self.trainDatas = pd.concat((self.notChurn_train.iloc[self.startNotChurnTrainDatasLocation:self.startNotChurnTrainDatasLocation +
-                                                                                                  self.churn_train.shape[shapeOfRows]*churnAndNotChurnProportion],
-                                                                                                  self.churn_train))
         self.trainDatas = self.trainDatas.sample(frac=1).as_matrix()
-        self.startNotChurnTrainDatasLocation =  self.startNotChurnTrainDatasLocation+ self.churn_train.shape[shapeOfRows]
+        self.startNotChurnTrainDatasLocation =self.startNotChurnTrainDatasLocation + self.churn_train.shape[shapeOfRows]* churnAndNotChurnProportion
 
         return self.trainDatas
 
@@ -48,6 +49,8 @@ class Data_process:
         # shuffle for next BuildTrainDatas with new epoch,
         self.churn_train = self.churn_train.sample(frac=1)
         self.notChurn_train = self.notChurn_train.sample(frac=1)
+        self.notChurn_train = self.notChurn_train.reset_index(drop=True)
+        self.churn_train = self.churn_train.reset_index(drop=True)
         return self.churn_train,self.notChurn_train
 
     def NextBatch(self,batchSize):
@@ -55,7 +58,7 @@ class Data_process:
         lables = np.zeros([batchSize],np.int64)
         if (self.startTrainDatasLocation+batchSize > self.trainDatas.shape[shapeOfRows]):
             self.BuildTrainDatas()
-            print("ReBuildTrainDatas")
+            #print("ReBuildTrainDatas")
             self.startTrainDatasLocation = 0
         samples = self.trainDatas[self.startTrainDatasLocation:self.startTrainDatasLocation+ batchSize]
         lables = samples[:,postionOfChurnFlag-1]
