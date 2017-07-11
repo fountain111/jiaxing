@@ -15,7 +15,7 @@ tf.app.flags.DEFINE_string('model_dir', '/tmp/jiaxing',
                            """and checkpoint.""")
 
 data = dp.Data_process()
-batchSize = 10
+batchSize = 200
 
 
 def train():
@@ -30,26 +30,27 @@ def train():
     init = tf.initialize_all_variables()
     sess = tf.InteractiveSession()
     sess.run(init)
+
     for step in range(FLAGS.max_steps):
        batch_x,batch_y = data.NextBatch(batchSize)
        feed_dict ={x:batch_x,target_y:batch_y}
        feed_dict.update(network.all_drop)
-       _,loss,pre_labels = sess.run([optimizer,loss_op,tf.argmax(model_labels, axis=1)],feed_dict = feed_dict)
+       sess.run(optimizer,feed_dict = feed_dict)
+
        if (step %1000 == 0):
+           loss,acc = sess.run([loss_op,accuracy],feed_dict=feed_dict)
+           print('train loss and acc', loss,acc)
+
            dp_dict = tl.utils.dict_to_one(network.all_drop)
-
-           sample = np.zeros([batchSize, data.sampleColumnSize])
-           lable = np.zeros([batchSize], np.int64)
-           sample = data.churn_validation[0:batchSize]
-           lable = sample[:, 0]
-           sample = sample[:, 1:]
-           feed_dict = {x: sample, target_y: lable}
+           feed_dict={x:data.churn_validation[:,1:],target_y:data.churn_validation[:,0]}
            feed_dict.update(dp_dict)
+           #pre_labels = sess.run(tf.argmax(model_labels,axis=1),feed_dict=feed_dict)
+           #recall = recall_score(data.churn_validation[:,0].ravel(), pre_labels.ravel())
+           acc = accuracy.eval(feed_dict=feed_dict)
+           print('recall',acc)
 
-           acc = sess.run(accuracy,feed_dict=feed_dict)
-           #recall = recall_score(batch_y.ravel(), pre_labels.ravel())
-           print(acc)
-       #     validation_loss = sess.run(loss_op, feed_dict={x: data.churn_validation[:,1:], target_y: data.churn_validation[:,0:1] })
+
+         #     validation_loss = sess.run(loss_op, feed_dict={x: data.churn_validation[:,1:], target_y: data.churn_validation[:,0:1] })
 
 
 def main(argv=None):
