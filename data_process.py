@@ -28,7 +28,7 @@ class Data_process:
                                     self.churn_train],ignore_index=True)
         self.trainDatas = self.trainDatas.sample(frac=1).as_matrix()
         self.startNotChurnTrainDatasLocation =self.churn_train.shape[shapeOfRows]* churnAndNotChurnProportion
-
+        self.validationDatas = np.concatenate((self.notChurn_validation,self.churn_validation))
     def BuildTrainDatas(self):
         if (self.startNotChurnTrainDatasLocation + self.churn_train.shape[shapeOfRows]) > self.notChurn_train.shape[shapeOfRows]:
             self.ShuffleChurnAndNotChurnTrainDatas()
@@ -67,5 +67,3 @@ class Data_process:
 
 
         return  samples,lables
-
-
