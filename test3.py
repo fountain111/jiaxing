@@ -16,10 +16,10 @@ churn = reader_churnflg[reader_churnflg['1'] == '1']
 
 for i in churn.index:
     startPosition = i-60
-    churnSample = reader.loc[startPosition:startPosition+exampleSize-1,:]
-    churnSamples.append(churnSample)
-    #reader.drop(reader.index[startPosition:startPosition + exampleSize-1], inplace=True)
+    #churnSample = reader.loc[startPosition:startPosition+exampleSize-1,:]
+    #churnSamples.append(churnSample)
+    reader.drop(reader.index[startPosition:startPosition + exampleSize-1], inplace=True)
 
-churnSamples = pd.concat(churnSamples, ignore_index=True)
-churnSamples.to_csv('chunk 0 churn.csv')
-#reader.to_csv('chunk 0 notChurn.csv')
+#churnSamples = pd.concat(churnSamples, ignore_index=True)
+#churnSamples.to_csv('chunk 0 churn.csv')
+reader.to_csv('chunk 0 notChurn.csv')
