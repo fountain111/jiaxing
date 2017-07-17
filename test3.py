@@ -14,12 +14,13 @@ reader_churnflg = reader[reader['code']=='churn_flg']
 
 churn = reader_churnflg[reader_churnflg['1'] == '1']
 
+
+notChurnBool = reader['month']==201705
 for i in churn.index:
     startPosition = i-60
-    #churnSample = reader.loc[startPosition:startPosition+exampleSize-1,:]
-    #churnSamples.append(churnSample)
-    reader.drop(reader.index[startPosition:startPosition + exampleSize-1], inplace=True)
+    notChurnBool[startPosition:startPosition+exampleSize] =False
 
 #churnSamples = pd.concat(churnSamples, ignore_index=True)
 #churnSamples.to_csv('chunk 0 churn.csv')
-reader.to_csv('chunk 0 notChurn.csv')
+newReader = reader[notChurnBool]
+newReader.to_csv('chunk 0 notChurn.csv')
