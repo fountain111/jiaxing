@@ -8,7 +8,7 @@ churnFlagPosition = 60
 churnSamples = []
 notChurnSamples = []
 notChurnDf = pd.DataFrame()
-reader = pd.read_csv('chunk 0.csv')
+reader = pd.read_csv('chunk 14.csv')
 
 reader_churnflg = reader[reader['code']=='churn_flg']
 
@@ -23,4 +23,4 @@ for i in churn.index:
 #churnSamples = pd.concat(churnSamples, ignore_index=True)
 #churnSamples.to_csv('chunk 0 churn.csv')
 newReader = reader[notChurnBool]
-newReader.to_csv('chunk 0 notChurn.csv')
+newReader.to_csv('chunk 14 notChurn.csv',index=False)
