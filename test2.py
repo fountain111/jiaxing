@@ -1,34 +1,37 @@
-import numpy as np
 import pandas as pd
+
+
 exampleSize = 70
 
 startPosition = 0
+churnFlagPosition = 60
+
 churnSamples = []
-<<<<<<< Updated upstream
-reader = pd.read_csv('chunk 14.csv')
-=======
 notChurnSamples = []
 notChurnDf = pd.DataFrame()
-reader = pd.read_csv('/Volumes/Seagate Expansion Drive/样本库/chunk 0.csv')
+reader = pd.read_csv('chunk 0.csv')
 
->>>>>>> Stashed changes
+reader = pd.read_csv('chunk 14.csv')
 reader_churnflg = reader[reader['code']=='churn_flg']
+
 churn = reader_churnflg[reader_churnflg['1'] == '1']
 chunkSize = 16
 
-for chunkNumber in range(chunkSize):
-    files = 'chunk {chunkOrder}.csv'
-    reader = pd.read_csv(files.format(chunkOrder=chunkNumber))
+
+
 
 def splitChurnAndWrite(files):
-    churnSamples = []
-    for i in churn.index:
-        startPosition = i-60
-        churnSample = reader.loc[startPosition:startPosition+exampleSize-1,:]
-        churnSamples.append(churnSample)
+    for chunkNumber in range(chunkSize):
+        files = 'chunk {chunkOrder}.csv'
+        reader = pd.read_csv(files.format(chunkOrder=chunkNumber))
+        churnSamples = []
+        for i in churn.index:
+            startPosition = i-60
+            churnSample = reader.loc[startPosition:startPosition+exampleSize-1,:]
+            churnSamples.append(churnSample)
 
-    churnSamples = pd.concat(churnSamples, ignore_index=True)
-    churnSamples.to_csv(files+'churn.csv',index=False)
+        churnSamples = pd.concat(churnSamples, ignore_index=True)
+        churnSamples.to_csv(files+'churn.csv',index=False)
 
 def splitNotChurnAndWrite():
     notChurnBool = reader['month'] == 201706
@@ -36,11 +39,6 @@ def splitNotChurnAndWrite():
         startPosition = i - 60
         notChurnBool[startPosition:startPosition + exampleSize] = False
 
-<<<<<<< Updated upstream
-    # churnSamples = pd.concat(churnSamples, ignore_index=True)
-    # churnSamples.to_csv('chunk 0 churn.csv')
-    newReader = reader[notChurnBool]
-    newReader.to_csv('chunk 14 notChurn.csv', index=False)
 
 def splitFile():
     reader = pd.read_csv('YBK201704_SORT.txt', sep=',',
@@ -56,21 +54,3 @@ def splitFile():
         chunkDf.to_csv(files.format(chunkOrder=i), index=False)
         i = i + 1
         chunks = []
-=======
-for i in churn.index:
-    startPosition = i-60
-    churnSample = reader.loc[startPosition:startPosition+exampleSize-1,:]
-    churnSamples.append(churnSample)
-<<<<<<< Updated upstream
-    #reader.drop(reader.index[startPosition:startPosition + exampleSize-1], inplace=True)
-
-churnSamples = pd.concat(churnSamples, ignore_index=True)
-churnSamples.to_csv('chunk 0 churn.csv')
-#reader.to_csv('chunk 0 notChurn.csv')
-=======
-    reader.drop(reader.index[startPosition:startPosition + exampleSize-1], inplace=True)
-churnSamples = pd.concat(churnSamples, ignore_index=True)
-churnSamples.to_csv('/Volumes/Seagate Expansion Drive/样本库/chunk 0 churn.csv')
-reader.to_csv('/Volumes/Seagate Expansion Drive/样本库/chunk 0 notChurn.csv')
->>>>>>> Stashed changes
->>>>>>> Stashed changes
